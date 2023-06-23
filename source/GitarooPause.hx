@@ -4,25 +4,23 @@ import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.graphics.frames.FlxAtlasFrames;
 
-class GitarooPause extends MusicBeatState
-{
+class GitarooPause extends MusicBeatState {
+	var background:FlxSprite;
 	var replayButton:FlxSprite;
 	var cancelButton:FlxSprite;
 
 	var replaySelect:Bool = false;
 
-	public function new():Void
-	{
+	public function new():Void {
 		super();
 	}
 
-	override function create()
-	{
+	override function create() {
 		if (FlxG.sound.music != null)
 			FlxG.sound.music.stop();
 
-		var bg:FlxSprite = new FlxSprite().loadGraphic(Paths.image('pauseAlt/pauseBG'));
-		add(bg);
+		background = new FlxSprite().loadGraphic(Paths.image('pauseAlt/pauseBG'));
+		add(background);
 
 		var bf:FlxSprite = new FlxSprite(0, 30);
 		bf.frames = Paths.getSparrowAtlas('pauseAlt/bfLol');
@@ -54,25 +52,23 @@ class GitarooPause extends MusicBeatState
 		super.create();
 	}
 
-	override function update(elapsed:Float)
-	{
+	override function update(elapsed:Float) {
 		if (controls.UI_LEFT_P || controls.UI_RIGHT_P)
 			changeThing();
 
-		if (controls.ACCEPT)
-		{
-			if (replaySelect)
-			{
+		if (controls.ACCEPT) {
+			if (replaySelect) {
 				MusicBeatState.switchState(new PlayState());
-			}
-			else
-			{
-				//PlayState.usedPractice = false;
+			} else {
+				// PlayState.usedPractice = false;
 				PlayState.changedDifficulty = false;
 				PlayState.seenCutscene = false;
 				PlayState.deathCounter = 0;
 				PlayState.instance.cpuControlled = false;
-				MusicBeatState.switchState(new MainMenuState());
+				if (ClientPrefs.mainMenuStyle == 'Classic')
+					MusicBeatState.switchState(new ClassicMainMenuState());
+				else
+					MusicBeatState.switchState(new MainMenuState());
 				FlxG.sound.playMusic(Paths.music('freakyMenu'));
 			}
 		}
@@ -80,17 +76,13 @@ class GitarooPause extends MusicBeatState
 		super.update(elapsed);
 	}
 
-	function changeThing():Void
-	{
+	function changeThing():Void {
 		replaySelect = !replaySelect;
 
-		if (replaySelect)
-		{
+		if (replaySelect) {
 			cancelButton.animation.curAnim.curFrame = 0;
 			replayButton.animation.curAnim.curFrame = 1;
-		}
-		else
-		{
+		} else {
 			cancelButton.animation.curAnim.curFrame = 1;
 			replayButton.animation.curAnim.curFrame = 0;
 		}
